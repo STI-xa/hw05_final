@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Технологии{% endblock %}
+{% block heading %}{% endblock %}
+{% block content %}
+<div class="row">
+  <h3>Вот что я умею:</h3>
+  <aside class="col-12 col-md-3">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <b>Python</b>
+      </li>
+      <li class="list-group-item">
+        <b>Django</b>
+      </li>
+      <li class="list-group-item">
+        <b>И еще немного HTML</b>
+      </li>
+    </ul>
+  </aside>
+  
+  <article class="col-12 col-md-8">
+    <style>
+      .nubex {
+      font-size: 20px;
+      color: #383838;
+      font-weight:bold;
+      }
+    </style>
+      <div style="padding-left:80px;">
+        <p class="nubex"><i>За такой короткий период, мне удалось многому научиться с нуля. 
+          <br>Хотя, иногда мне кажется, что я ничего не знаю </i></p>
+      </div>
+  </article>
+  <style>
+    .figure {
+      display: table;
+    }
+    .figcaption {
+      padding: 0.5em;
+      display: table-caption;
+      caption-side: top;
+      border: thin silver solid;
+      border-bottom: thin silver solid;
+    }
+  </style>
+    <div style="padding-top:30px; padding-left:550px;">
+      <div class="figcaption">
+        <h6><i>Моя собака всегда рядом и не дает мне впасть в отчаяние</i></h6>
+      <div class="figure">
+        <img src="{% static 'img/IMG_6595.jpg' %}" alt="My image"/>
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block  title %}Последние обновления на сайте{% endblock %}
+{% block heading %}Последние обновления на сайте{% endblock %}
+  {% block content %}
+    {% include 'posts/includes/switcher.html' with index=True%}
+    {% load cache %}
+    {% cache 20 index_page_cache %}
+    {% for post in page_obj %}
+      {% include "includes/article.html" with with_author=True group_link_on_page=True %}
+      <a href="{% url "posts:post_detail" post.id %}">подробная информация</a>
+      {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% endcache %}
+    {% include 'posts/includes/paginator.html' %}
+  {% endblock %}
