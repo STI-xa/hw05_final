@@ -217,6 +217,7 @@ class PaginatorViewsTest(TestCase):
             slug='test_slug',
             description='Тестовое описание',
         )
+        cls.following = User.objects.create(username='NoName')
         Post.objects.bulk_create(
             [Post(
                 text=f'Тестовый текст{i}',
@@ -229,19 +230,23 @@ class PaginatorViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.authorized_client = Client()
-        self.user = PaginatorViewsTest.post_author
+        self.user = PaginatorViewsTest.following
         self.authorized_client.force_login(self.user)
 
     def test_first_page_contains_ten_records(self):
+        Follow.objects.get_or_create(
+            user=self.following,
+            author=self.post_author,)
         pages = [
             reverse('posts:index'),
             reverse(
                 'posts:profile', kwargs={'username': self.user}),
             reverse('posts:group_list', kwargs={'slug': self.group.slug}),
+            reverse('posts:follow_index')
         ]
         for page in pages:
-            respons_first_page = self.client.get(page)
-            respons_second_page = self.client.get(page + '?page=2')
+            respons_first_page = self.authorized_client.get(page)
+            respons_second_page = self.authorized_client.get(page + '?page=2')
         self.assertEqual(
             len(respons_first_page.context['page_obj']),
             settings.NUM_POSTS_ON_PAGE
@@ -286,13 +291,16 @@ class ImageTests(TestCase):
             image=cls.uploaded,
         )
 
+    def setUp(self):
+        self.guest_client = Client()
+        self.authorized_client = Client()
+        self.following = User.objects.create(username='NoName')
+        self.authorized_client.force_login(self.following)
+
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
-
-    def setUp(self):
-        self.guest_client = Client()
 
     def test_image_in_index_profile_and_group_list_pages(self):
         """Картинка передается на страницы index, profile и group_list."""
@@ -313,6 +321,17 @@ class ImageTests(TestCase):
         response = self.guest_client.get(
             reverse('posts:post_detail', kwargs={'post_id': self.post.id})
         )
+        check_value = response.context['post']
+        self.assertEqual(check_value.image, self.post.image)
+
+    def test_image_in_post_detail_page(self):
+        """Картинка передается на страницу follow_index."""
+        Follow.objects.get_or_create(
+            user=self.following,
+            author=self.user,
+        )
+        response = self.authorized_client.get(
+            reverse('posts:follow_index'))
         check_value = response.context['post']
         self.assertEqual(check_value.image, self.post.image)
 

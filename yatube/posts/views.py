@@ -11,10 +11,7 @@ User = get_user_model()
 
 @login_required
 def follow_index(request):
-    follower = Follow.objects.filter(user=request.user).values_list(
-        'author_id', flat=True
-    )
-    posts = Post.objects.filter(author_id__in=follower)
+    posts = Post.objects.filter(author__following__user=request.user)
     context = {
         'page_obj': paginator_function(posts, request),
     }
@@ -24,10 +21,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    if not Follow.objects.filter(
-        user=request.user,
-        author=author
-    ).exists() and request.user != author:
+    if request.user != author:
         Follow.objects.get_or_create(user=request.user, author=author)
     return redirect('posts:follow_index')
 
