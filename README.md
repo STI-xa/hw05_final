@@ -41,7 +41,7 @@ ____
 Клонировать репозиторий:
 
 ```
-git clone https://github.com/STI-xa/hw05_final
+git clone git@github.com:STI-xa/hw05_final.git
 ```
 
 Перейти в папку с проектом:
